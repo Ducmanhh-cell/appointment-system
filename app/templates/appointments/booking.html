@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block title %}Đặt lịch | Appointment{% endblock %}{% block content %}
+<div class="heading"><p class="eyebrow">ĐẶT LỊCH HẸN</p><h1>Đặt lịch của bạn</h1><p>Điền thông tin. Lịch mới sẽ chờ xác nhận.</p></div><form method="post" class="panel">{% csrf_token %}
+{% if form.non_field_errors %}<div class="error">{{ form.non_field_errors }}</div>{% endif %}
+<div class="fields"><div class="field wide"><label>{{ form.service.label }}</label>{{ form.service }}{{ form.service.errors }}</div><div class="field wide"><label>{{ form.slot.label }}</label>{{ form.slot }}<small>Chỉ các khung giờ còn khả dụng mới hiển thị.</small>{{ form.slot.errors }}</div>
+{% for field in form.visible_fields %}{% if field.name != "service" and field.name != "slot" %}<div class="field {% if field.name == 'note' or field.name == 'email' %}wide{% endif %}"><label>{{ field.label }}</label>{{ field }}{{ field.errors }}</div>{% endif %}{% endfor %}</div><button class="button full" type="submit">Gửi yêu cầu đặt lịch</button><small>Không nhập mật khẩu hoặc thông tin nhạy cảm vào phần ghi chú.</small></form>{% endblock %}

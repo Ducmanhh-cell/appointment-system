@@ -1,0 +1,4 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{% block title %}Appointment{% endblock %}</title><link rel="stylesheet" href="/static/css/style.css"></head><body>
+<header><div class="container nav"><a class="brand" href="/">◈ Appointment</a><nav><a href="/">Trang chủ</a><a href="/dat-lich/">Đặt lịch</a><a href="/tra-cuu/">Tra cứu lịch</a><a href="/admin/">Quản trị</a></nav></div></header>
+<main class="container main">{% if messages %}{% for message in messages %}<div class="alert">{{ message }}</div>{% endfor %}{% endif %}{% block content %}{% endblock %}</main>
+<footer>Đề 40 — Hệ thống Đặt lịch hẹn · Lường Đức Mạnh · 2026</footer></body></html>
