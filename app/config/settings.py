@@ -20,6 +20,7 @@ ALLOWED_HOSTS = [
     if x.strip()
 ]
 
+# CSRF: cho phép các địa chỉ HTTP hiện tại và HTTPS qua Nginx.
 CSRF_TRUSTED_ORIGINS = [
     x.strip()
     for x in os.getenv(
@@ -27,6 +28,17 @@ CSRF_TRUSTED_ORIGINS = [
     ).split(",")
     if x.strip()
 ]
+
+for origin in [
+    "https://localhost:8443",
+    "https://127.0.0.1:8443",
+]:
+    if origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(origin)
+
+# Nginx ghi đè X-Forwarded-Proto bằng giao thức thực tế.
+# Chỉ tin cậy header này khi yêu cầu đi qua reverse proxy đáng tin cậy.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -68,12 +80,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# PostgreSQL: Django sử dụng tài khoản riêng, ít đặc quyền.
+# Ưu tiên DJANGO_DB_USER và DJANGO_DB_PASSWORD.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB", "appointment_db"),
-        "USER": os.getenv("POSTGRES_USER", "app_user"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", ""),
+        "USER": os.getenv(
+            "DJANGO_DB_USER",
+            os.getenv("POSTGRES_USER", "app_user")
+        ),
+        "PASSWORD": os.getenv(
+            "DJANGO_DB_PASSWORD",
+            os.getenv("POSTGRES_PASSWORD", "")
+        ),
         "HOST": os.getenv("POSTGRES_HOST", "db"),
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
         "CONN_MAX_AGE": 60,
@@ -109,9 +129,12 @@ STATICFILES_DIRS = (
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Security Headers
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "SAMEORIGIN"
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+# Cookie security
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 

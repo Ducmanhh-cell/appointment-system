@@ -1,13 +1,50 @@
+
+# ==========================================
+# APPOINTMENT SYSTEM - GITIGNORE
+# ==========================================
+
+# 1. Environment variables and credentials
 .env
+.env.*
+!.env.example
+django-db.env
+
+# 2. Python cache and virtual environments
 __pycache__/
 *.py[cod]
-*.sqlite3
 .venv/
 venv/
+
+# 3. Database files and backups
+*.sqlite3
+backup/
+*.dump
+*.sql
+*.backup
+
+# 4. Django generated files
 staticfiles/
 media/
 *.log
-.DS_Store
-Thumbs.db
+
+# 5. SSL/TLS certificates and private keys
+nginx/certs/
+nginx-backup/
 *.key
 *.pem
+*.p12
+*.pfx
+
+# 6. Temporary and backup files
+*.bak
+*.tmp
+*.swp
+*~
+
+# 7. Operating system files
+.DS_Store
+Thumbs.db
+
+# 8. IDE and editor files
+.vscode/
+.idea/
