@@ -1,0 +1,17 @@
+
+modules:
+  http_status:
+    prober: http
+    timeout: 5s
+    http:
+      valid_status_codes:
+        - 200
+        - 301
+        - 302
+        - 307
+        - 308
+      method: GET
+      follow_redirects: false
+      preferred_ip_protocol: ip4
+      headers:
+        Host: "127.0.0.1"

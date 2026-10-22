@@ -51,7 +51,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:?Set PGADMIN_DEFAULT_EMAIL in .env}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?Set PGADMIN_DEFAULT_PASSWORD in .env}
     ports:
-      - "127.0.0.1:${PGADMIN_PORT:-5050}:80"
+      - "127.0.0.1:15050:80"
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     depends_on:
@@ -59,6 +59,7 @@ services:
         condition: service_healthy
     networks:
       - backend
+      - pgadmin_access
 
   nginx:
     image: nginx:alpine
@@ -146,6 +147,31 @@ services:
     networks:
       - monitoring
 
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.16.0
+    restart: unless-stopped
+    env_file:
+      - postgres-exporter.env
+    environment:
+      DATA_SOURCE_URI: "db:5432/appointment_db?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+      - monitoring
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.25.0
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/blackbox/blackbox.yml"
+    volumes:
+      - ./blackbox/blackbox.yml:/etc/blackbox/blackbox.yml:ro
+    networks:
+      - frontend
+      - monitoring
+
 volumes:
   postgres_data:
   pgadmin_data:
@@ -158,8 +184,13 @@ volumes:
 networks:
   frontend:
     driver: bridge
+
   backend:
     driver: bridge
     internal: true
+
   monitoring:
+    driver: bridge
+
+  pgadmin_access:
     driver: bridge
